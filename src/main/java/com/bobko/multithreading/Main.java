@@ -3,7 +3,8 @@ package com.bobko.multithreading;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
 
@@ -16,6 +17,8 @@ public class Main {
     LinkedList<Integer> queue = new LinkedList<>();
     List<Thread> threads = new ArrayList<>();
 
+    Lock lock = new ReentrantLock(true);
+
     public static void main(String[] args) {
 
         new Main().method();
@@ -24,7 +27,7 @@ public class Main {
 
     private void method() {
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 12; i++) {
 
             // storage.setValue(storage.getValue() + 1);
 
@@ -35,6 +38,7 @@ public class Main {
 
                         if (queue.isEmpty()) {
                             try {
+                                System.err.println(Thread.currentThread().getName() + " is about to wait");
                                 monitor.wait();
                             } catch (InterruptedException e) {
                                 System.err.println(Thread.currentThread().getName() + " was interrupted");
@@ -49,6 +53,7 @@ public class Main {
                             // System.out.println(Thread.currentThread().getName()
                             // + ":" + storage.getValue() + " I'm off");
                         }
+                        System.err.println(Thread.currentThread().getName() + " is about to release monitor");
                     }
                 }
 
@@ -62,13 +67,15 @@ public class Main {
 
         new Thread(() -> {
 
+            for (int i = 0; i < 10; i++) {
                 synchronized (monitor) {
-                    for (int i = 0; i < 10; i++) {
-                        queue.addLast(1);
-                        monitor.notifyAll();
-                    }
-                    System.err.println(Thread.currentThread().getName() + " Is about to finish");
+                    queue.addLast(1);
+                    monitor.notifyAll();
                 }
+
+            }
+
+            System.err.println(Thread.currentThread().getName() + " Is about to finish");
 
         }, "producer").start();
 
