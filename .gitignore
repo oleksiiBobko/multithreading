@@ -1,0 +1,24 @@
+# Common #
+*.class
+*.patch
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Idea #
+*.iml
+*.ipr
+*.iws
+*.ids
+.idea/
+
+# Maven #
+log/
+target/
+
+#eclipse#
+.classpath
+/.settings
+.project
