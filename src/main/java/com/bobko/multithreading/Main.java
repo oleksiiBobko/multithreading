@@ -37,9 +37,11 @@ public class Main {
 
                 while (hook.isActive()) {
                     try {
-                        lock.lock();
+                        boolean l = lock.tryLock();
+                        if (l) {
     //                    synchronized (monitor) {
                         doWork();
+                        }
     //                    }
                     } finally {
                         lock.unlock();
